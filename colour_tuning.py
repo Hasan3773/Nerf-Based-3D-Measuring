@@ -43,9 +43,6 @@ while(1):
     RED_MAX = np.array([h1, s1, v1])
     RED_MIN = np.array([h2, s2, v2])
 
-    print(RED_MAX)
-    print(RED_MIN)
-
     # recreate the mask
     filtered_mask = cv2.inRange(image, RED_MIN, RED_MAX)
 
