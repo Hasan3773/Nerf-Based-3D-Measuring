@@ -2,26 +2,17 @@ import numpy as np
 import cv2 as cv
 import glob
  
-# Dummy camera matrix (3x3)
+# Camera matrix (3x3)
 camera_matrix = np.array([[7.93414938e+02, 0.00000000e+00, 5.26000909e+02],
  [0.00000000e+00, 3.62409090e+03, 9.97845449e+02],
  [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
-# Dummy distortion coefficients (1x5)
+# Distortion coefficients (1x5)
 dist_coeffs = np.array([0.1, -0.2, 0.05, 0, 0])
 
 # Convert the matrix to floating point
 mtx = camera_matrix.astype(np.float32)
 dist = dist_coeffs.astype(np.float32)
-
-"""
-# Save the arrays to a NPZ file 
-np.savez('camera_data.npz', camera_matrix=camera_matrix, dist_coeffs=dist_coeffs)
-
-# Load previously saved data
-with np.load('camera_data.npz') as X:
- mtx, dist = [X[i] for i in ('camera_matrix','dist_coeffs')]
-"""
 
 # Initialize some variables - mabye come back and understand them more
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -29,7 +20,7 @@ objp = np.zeros((10*7,3), np.float32)
 objp[:,:2] = np.mgrid[0:10,0:7].T.reshape(-1,2)
 axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
 
-# ------------------------------------
+# ------------------- Draw Pose ---------------------------------
 
 # Function to draw lines onto the img 
 def draw(img, corners, imgpts):
@@ -61,8 +52,20 @@ for fname in glob.glob('chessboards\chessboard1.jpg'):
  k = cv.waitKey(0) & 0xFF
  if k == ord('s'):
     cv.imwrite(fname[:6]+'.png', img)
- 
+
+print(tvecs)
+print(rvecs)
+
 cv.destroyAllWindows()
+
+# ------------ Generate Transformation Json ---------------------------
+
+# so i need to take the transformation matrix from the image after i take the pose 
+# I think thats tvec 
+# use rodrigues to convert rvecs or something 
+
+
+
 
 
 
