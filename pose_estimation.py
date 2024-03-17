@@ -3,9 +3,9 @@ import cv2 as cv
 import glob
  
 # Dummy camera matrix (3x3)
-camera_matrix = np.array([[1000, 0, 320],
-                           [0, 1000, 240],
-                           [0, 0, 1]])
+camera_matrix = np.array([[7.93414938e+02, 0.00000000e+00, 5.26000909e+02],
+ [0.00000000e+00, 3.62409090e+03, 9.97845449e+02],
+ [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
 # Dummy distortion coefficients (1x5)
 dist_coeffs = np.array([0.1, -0.2, 0.05, 0, 0])
@@ -25,8 +25,8 @@ with np.load('camera_data.npz') as X:
 
 # Initialize some variables - mabye come back and understand them more
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-objp = np.zeros((6*7,3), np.float32)
-objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
+objp = np.zeros((10*7,3), np.float32)
+objp[:,:2] = np.mgrid[0:10,0:7].T.reshape(-1,2)
 axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
 
 # ------------------------------------
@@ -41,11 +41,11 @@ def draw(img, corners, imgpts):
  return img
 
 # Draws the axis onto the image 
-for fname in glob.glob('img.png'):
+for fname in glob.glob('chessboards\chessboard1.jpg'):
  print(fname)
  img = cv.imread(fname)
  gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
- ret, corners = cv.findChessboardCorners(gray, (7,6),None)
+ ret, corners = cv.findChessboardCorners(gray, (10,7),None)
  
  if ret == True:
     corners2 = cv.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
