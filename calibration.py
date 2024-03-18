@@ -9,7 +9,7 @@ objp = np.zeros((7*10,3), np.float32)
 objp[:,:2] = np.mgrid[0:7,0:10].T.reshape(-1,2)
 
 # find corners of checkerboard
-images = glob.glob('chessboards/chessboard*.jpg')
+images = glob.glob('dataset1/images/img*.jpg')
 
 obj_points = [] # 3d point in real world space
 img_points = [] # 2d points in image plane

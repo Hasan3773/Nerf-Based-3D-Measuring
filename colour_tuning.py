@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 
 # default max/min values
-RED_MAX = np.array([10, 100, 100]) / 100.0 * 255
-RED_MIN = np.array([0, 29, 35]) / 100.0 * 255
+RED_MAX = np.array([131, 255, 255])
+RED_MIN = np.array([109, 105, 103])
 
 print(RED_MAX)
 print(RED_MIN)
 
-src = cv2.imread("test.png")
+src = cv2.imread("dataset6/images/WIN_20240318_13_42_27_Pro (3).jpg")
 
 image = cv2.cvtColor(src, cv2.COLOR_RGB2HSV)
 filtered_mask = cv2.inRange(image, RED_MIN, RED_MAX)
