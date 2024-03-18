@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 from pose_estimation import estimate_pose
-import sys
+import shutil
 
 use_video = True
 
@@ -17,8 +17,8 @@ camera_matrix = np.array([[1.12132240e+03, 0.00000000e+00, 9.37579395e+02],
 # Calibrated distortion coefficients (1x5)
 dist_coeffs = np.array([[ 0.13312033, -0.49735709, -0.00141145,  0.00096862,  0.59645158]])
 
-RED_MAX = np.array([131, 255, 255])
-RED_MIN = np.array([109, 105, 103])
+RED_MAX = np.array([180, 255, 255])
+RED_MIN = np.array([106, 141, 63])
 
 # Aruco Tag Parameters
 dictionary = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250)
@@ -52,21 +52,18 @@ def process_image(image, fname):
     transforms["w"] = image.shape[1]
     transforms["h"] = image.shape[0]
 
-    # Detect markers
-    corners, ids, rej = detector.detectMarkers(gray)
-    
     t_matrix, labeled, success = estimate_pose(image, gray, detector, camera_matrix, dist_coeffs)
     print(success)
     if success:
         frame = {}
         frame["file_path"] = str(Path("images") / f"masked_{Path(fname).stem}.png")
-        frame["sharpness"] = 100
+        frame["sharpness"] = 30
         frame["transform_matrix"] = [list(t) for t in t_matrix]
         transforms["frames"].append(frame)
     return labeled
 
 # Dataset paths
-dataset_path = Path('datasets/c0_0')
+dataset_path = Path('datasets/lego_thin_test')
 images_glob = 'WIN_2024031*.jpg'
 
 if not use_video:
@@ -76,7 +73,14 @@ if not use_video:
         cv.imshow("labeled", labeled)
         cv.waitKey(0)
 else:
+    if os.path.isdir(str(dataset_path)):
+        shutil.rmtree(str(dataset_path))
+    os.mkdir(str(dataset_path))
+    os.mkdir(str(dataset_path/"images")) 
+
     cap = cv.VideoCapture(0)
+    cap.set(cv.CAP_PROP_FRAME_WIDTH,1920)
+    cap.set(cv.CAP_PROP_FRAME_HEIGHT,1080)
     if not cap.isOpened():
         print("Cannot open camera")
         exit()
@@ -93,14 +97,14 @@ else:
         fname = f"image{i}.png"
         labeled = process_image(frame, fname)
         cv.imshow("labeled", labeled)
-    
-        if cv.waitKey(1) == ord('q'):
+        i+=1
+        if cv.waitKey(300) == ord('q'):
           break
 
 with open(str(dataset_path/"transforms.json"), "w") as outfile: 
     json.dump(transforms, outfile, indent=2)
 
 cv.destroyAllWindows()
-print(f"/mnt/c/Users/owenl/Documents/Instant-NGP-for-RTX-3000-and-4000/Instant-NGP-for-RTX-3000-and-4000/instant-ngp.exe /home/owen/Nerf-Based-3D-Measuring/{str(dataset_path)}")
-os.system(f"/mnt/c/Users/owenl/Documents/Instant-NGP-for-RTX-3000-and-4000/Instant-NGP-for-RTX-3000-and-4000/instant-ngp.exe {str(dataset_path)}")  
+print(f"C:/Users/owenl/Documents/Instant-NGP-for-RTX-3000-and-4000/Instant-NGP-for-RTX-3000-and-4000/instant-ngp.exe C:/Users/owenl/Documents/Nerf-Based-3D-Measuring/{str(dataset_path)}")
+os.system(f"C:/Users/owenl/Documents/Instant-NGP-for-RTX-3000-and-4000/Instant-NGP-for-RTX-3000-and-4000/instant-ngp.exe C:/Users/owenl/Documents/Nerf-Based-3D-Measuring/{str(dataset_path)}")  
 
