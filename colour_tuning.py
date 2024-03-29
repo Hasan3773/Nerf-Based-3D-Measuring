@@ -34,7 +34,7 @@ if use_camera:
         print("Cannot open camera")
         exit()
 else: 
-    frame = cv2.imread("datasets/WIN_20240318_17_10_33_Pro.jpg")
+    frame = cv2.imread("datasets/WIN_20240318_17_10_33_Pro.jpg") # loads image into frame 
 
 while(1):
     print('t')
@@ -42,7 +42,7 @@ while(1):
         ret, frame = cap.read()
         print('t')
     
-    image = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
+    image = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) # converts from BGR to HSV 
 
     # get current positions of four trackbars
     h1 = cv2.getTrackbarPos('H1','filtered')
@@ -57,9 +57,9 @@ while(1):
     RED_MAX = np.array([h1, s1, v1])
     RED_MIN = np.array([h2, s2, v2])
 
-    # recreate the mask
-    filtered_mask = cv2.inRange(image, RED_MIN, RED_MAX)
-    masked_rgb = cv2.bitwise_and(frame, frame, mask=filtered_mask)
-    masked_rgb = np.concatenate([masked_rgb, filtered_mask[..., None]], axis=2)
+    # recreate the mask 
+    filtered_mask = cv2.inRange(image, RED_MIN, RED_MAX) # creates mask (2D matrix) by making everything in the range 1 and outside 0
+    masked_rgb = cv2.bitwise_and(frame, frame, mask=filtered_mask) # applies mask to 3D image matrix
+    masked_rgb = np.concatenate([masked_rgb, filtered_mask[..., None]], axis=2) # Adds alpha channel (converting to png)
     cv2.imshow('filtered', masked_rgb)
     cv2.waitKey(1)

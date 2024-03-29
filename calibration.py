@@ -5,11 +5,11 @@ import glob
 # used OpenCV camera calibration docs as guide
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-objp = np.zeros((7*10,3), np.float32)
-objp[:,:2] = np.mgrid[0:7,0:10].T.reshape(-1,2)
+objp = np.zeros((7*10,3), np.float32) # creates an empty array which will store checkerboard coordinates
+objp[:,:2] = np.mgrid[0:7,0:10].T.reshape(-1,2) # populates x,y,z coords of each square into array 
 
 # find corners of checkerboard
-images = glob.glob('dataset1/images/img*.jpg')
+images = glob.glob('chessboards/*.jpg') # loads jpg into image variable
 
 obj_points = [] # 3d point in real world space
 img_points = [] # 2d points in image plane
@@ -17,9 +17,8 @@ img_points = [] # 2d points in image plane
 
 for fname in images: 
     img = cv2.imread(fname)
-    # grey = cv2.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-    # finding chessboard corners
+    # finding chessboard corners in 2D space
     found, out_corners = cv2.findChessboardCorners(img, (7, 10))
 
     if found: 
@@ -36,7 +35,8 @@ for fname in images:
 
 print(np.array(img_points).shape)
 print(img.shape)
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, img.shape[:2], None, None)
+# takes in list of obj points(3d), img points(2d), img size, runs calibration algo to find rvec, tvec, dist 
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, img.shape[:2], None, None) # does pose est of checkerboard 
 
 print(ret)
 print(mtx)
